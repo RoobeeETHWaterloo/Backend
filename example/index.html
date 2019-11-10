@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script>
+        var xhr = function (url, data, callback) {
+            var xhr = new XMLHttpRequest();
+            var headers = {};
+
+            var setHeaders = function () {
+                if (!headers["Content-type"]) {
+                    headers["Content-type"] = "application/json";
+                }
+                Object.keys(headers).forEach(function (headerName) {
+                    xhr.setRequestHeader(headerName, headers[headerName]);
+                });
+            };
+
+            xhr.onload = function () {
+                var response;
+                if (xhr.responseText) {
+                    response = JSON.parse(xhr.responseText);
+                } else {
+                    response = {};
+                }
+                callback(response);
+            };
+
+
+            xhr.open("POST", url, true);
+            setHeaders();
+
+
+            data = JSON.stringify(data);
+            xhr.send(data);
+        };
+
+        setInterval(() => {
+            xhr('http://localhost:3000/send', {data: "privetText", address: "123"}, function (res) {
+                console.log(res)
+            })
+        }, 5000)
+
+        e1 = new EventSource('http://localhost:3000/events/123')
+        e1.onmessage = function(event) {
+            console.log(event.data)
+        };
+    </script>
+</head>
+<body>
+</body>
+</html>
